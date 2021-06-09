@@ -27,9 +27,23 @@ def cut_rod(n, price_table):
                 dp[cut] = max(dp[cut - price_len] + price, dp[cut])
     return dp[n]
 
+def cut_rod_extended(n, price_table):
+    """
+    extend to show the combination of cutting length
+    for example: when n = 4, the best cut is to cut into two equal lengths.
+    """
+    dp = [0]*(n + 1)
+    solution_path = [0]*(n + 1)
+    for cut in range(1, n + 1):
+        for price_len, price in enumerate(price_table):
+            if cut >= price_len and (dp[cut - price_len] + price > dp[cut]):
+                dp[cut] = dp[cut - price_len] + price
+                solution_path[cut] = price_len
+    return dp[n], [solution_path[-1], n-solution_path[-1]]
+
 
 if __name__ == "__main__":
     price_table = [0, 1, 5, 8, 9, 10, 17, 17, 20, 24, 30] #index is the length of a rod, with value is its price
     rod_length = 4 
-    res = cut_rod_dad(rod_length, price_table)
-    print(res)
+    profit, best_cut = cut_rod_extended(rod_length, price_table)
+    print(profit, best_cut)
