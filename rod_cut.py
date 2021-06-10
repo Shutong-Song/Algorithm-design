@@ -41,9 +41,31 @@ def cut_rod_extended(n, price_table):
                 solution_path[cut] = price_len
     return dp[n], [solution_path[-1], n-solution_path[-1]]
 
+def cut_rod_memoization(n, dp, price_table, path):
+    """
+    use dynamic programming from top-down: memoization
+    """
+    if dp[n] >= 0:
+        return dp[n]
+    elif n == 0:
+        return 0
+    else:
+        q = float("-inf")
+        for i in range(1, n+1):
+            if price_table[i] + cut_rod_memoization(n - i, dp, price_table, path) > q:
+                q = price_table[i] + cut_rod_memoization(n - i, dp, price_table, path)
+                path[n] = i
+    dp[n] = q
+    return q
+
 
 if __name__ == "__main__":
     price_table = [0, 1, 5, 8, 9, 10, 17, 17, 20, 24, 30] #index is the length of a rod, with value is its price
     rod_length = 4 
     profit, best_cut = cut_rod_extended(rod_length, price_table)
     print(profit, best_cut)
+    dp = [float("-inf")]*(rod_length + 1)
+    path = [0]*(rod_length + 1)
+    profit1 = cut_rod_memoization(rod_length, dp, price_table, path)
+    print(profit1, [path[rod_length], rod_length - path[rod_length]])
+    
